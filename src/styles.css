@@ -161,3 +161,124 @@ body,.app-shell{background:radial-gradient(ellipse at 78% 0%,#29264b 0%,#111322 
 .icon-button:hover{border-color:#aaa5ff;color:#d6d3ff}
 @media(hover:hover){.snippet-card:hover{transform:translateX(2px)}}
 @media(prefers-reduced-motion:reduce){.snippet-card,.primary-button{transition:none}}
+
+
+/* CodeVault redesign v2: force a true dark interface across the entire app. */
+:root{
+  color-scheme:dark!important;
+  --cv-bg:#090a12;
+  --cv-panel:#111321;
+  --cv-panel-2:#15182a;
+  --cv-line:#292d49;
+  --cv-text:#f3f2ff;
+  --cv-muted:#a3a5bd;
+  --cv-accent:#a69bff;
+  --cv-accent-2:#7669e8;
+  font-family:Inter,Manrope,'DM Sans',sans-serif;
+  background:var(--cv-bg)!important;
+  color:var(--cv-text);
+}
+html,body,#root{min-height:100%;background:#090a12!important;color:var(--cv-text)}
+body{min-width:320px;background:radial-gradient(ellipse at 78% -10%,#28244d 0%,#111321 36%,#090a12 75%)!important}
+.app-shell{min-height:100vh;background:transparent!important;color:var(--cv-text)}
+.sidebar{background:rgba(13,15,28,.96)!important;border-right:1px solid #292b46!important;backdrop-filter:blur(18px);box-shadow:12px 0 50px #05050d22}
+.brand{padding-bottom:54px;color:#f4f2ff}
+.brand-mark{width:36px;height:36px;border-radius:12px;background:linear-gradient(145deg,#c0b8ff,#7769e8)!important;color:#121226!important;box-shadow:0 8px 26px #8679ff45}
+.brand-accent,.title-period{color:#b4aaff!important}
+.workspace-label,.sidebar-heading,.eyebrow,.list-heading,.detail-date,.code-toolbar,.detail-meta>span,.page-footer,.sidebar-foot{color:#9295b2}
+.nav-item,.tag-nav{color:#b7bad0;border-radius:10px;transition:background .2s,color .2s}
+.nav-item.active,.tag-nav.selected{background:linear-gradient(100deg,#302b58,#211f3e)!important;color:#e5e0ff!important}
+.nav-item>span:first-child,.tag-dot{color:#b3aaff;background:#9487f4}
+.nav-count{color:#b9b5dd}
+.local-note{color:#a7a9bf;border-color:#292b46}
+.sidebar-foot{border-color:#292b46}
+.topbar{height:78px;border-color:#292b46;background:#0d0f1dcc;backdrop-filter:blur(16px)}
+.breadcrumbs{color:#a4a6bf}
+.breadcrumbs span{color:#686b8d}
+.breadcrumbs strong{color:#f0efff}
+.top-actions{gap:16px}
+.text-action{color:#b9bbd0;transition:color .18s}
+.text-action:hover{color:#c5bcff}
+.primary-button{border-radius:10px!important;background:linear-gradient(135deg,#b8afff,#8879f0)!important;color:#141326!important;padding:12px 17px!important;font-weight:700;box-shadow:0 8px 24px #8376ef38!important;transition:transform .2s,box-shadow .2s,filter .2s}
+.primary-button:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 12px 30px #8376ef55!important}
+.content{max-width:1450px;padding:58px clamp(22px,5vw,72px) 32px}
+.page-intro{margin-bottom:34px}
+.eyebrow{color:#b4aaff!important;font-size:10px;letter-spacing:2px}
+h1{font-size:clamp(34px,4vw,48px)!important;letter-spacing:-2px!important;color:#f4f2ff!important;margin:12px 0 8px!important}
+.page-intro p{color:#a5a7c0;font-size:13px}
+.snippet-total{padding:14px 18px;border:1px solid #373456;border-radius:14px;background:linear-gradient(145deg,#1c1b36,#111322);box-shadow:0 12px 30px #05050d35}
+.snippet-total strong{font-size:30px;color:#c1b8ff!important}
+.snippet-total span{color:#a0a0bd}
+.toolbar{gap:12px;margin-bottom:25px}
+.search-box,.toolbar select{height:48px;border:1px solid #343653!important;background:#141629!important;border-radius:11px!important;box-shadow:0 6px 20px #05050d20}
+.search-box{padding:0 16px}
+.search-box>span{color:#aaa2ed}
+.search-box input{color:#f1efff!important;font-size:12px}
+.search-box input::placeholder{color:#8588a7!important}
+.toolbar select{color:#dedcff!important;padding:0 14px}
+.library-layout{grid-template-columns:minmax(280px,.86fr) minmax(0,1.5fr);gap:20px}
+.snippet-list,.detail-panel{background:linear-gradient(150deg,rgba(23,25,44,.97),rgba(14,16,29,.98))!important;border:1px solid #333653!important;border-radius:16px!important;box-shadow:0 18px 55px #03040c55!important;overflow:hidden}
+.list-heading{height:56px;padding:0 19px;border-color:#2c2f4c}
+.list-heading b{color:#c0b8ff}
+.list-heading button{color:#a2a4bf}
+.bulk-toolbar{padding:11px 17px;border-color:#2c2f4c;color:#afb0c8}
+.bulk-toolbar button{border-radius:8px}
+.snippet-row{border-color:#282b45}
+.snippet-card{padding:18px 18px 16px;color:#efeeff;transition:background .18s,transform .18s}
+.snippet-card:hover{background:#22223d!important}
+.snippet-card.chosen{background:linear-gradient(100deg,#302b59,#201f3a)!important;box-shadow:inset 3px 0 #b5aaff!important}
+.language-pill{background:#302c56!important;color:#d2cbff!important;border:1px solid #49436f;border-radius:6px;padding:5px 9px}
+.snippet-card strong{font-size:13px;color:#f4f2ff}
+.snippet-card p{font-size:11px;color:#a5a7c0;line-height:1.65}
+.snippet-card-bottom{color:#9295b2}
+.snippet-card-bottom i{color:#bdb5ff}
+.detail-panel{padding:28px 30px;min-height:490px}
+.detail-panel h2{font-size:24px;color:#f5f3ff;letter-spacing:-.7px;margin-top:24px}
+.detail-description{font-size:12px;color:#a8aac2;line-height:1.65}
+.detail-date{color:#a2a3c1}
+.detail-actions{gap:9px}
+.icon-button{width:36px;height:36px;border-radius:10px;background:#22223d!important;border:1px solid #414164!important;color:#d1ccff!important}
+.icon-button:hover{border-color:#a99fff!important;background:#302d55!important}
+.code-toolbar{padding:13px 16px;background:#20213a!important;border:1px solid #3a3b5d!important;border-bottom:0}
+.code-toolbar span{color:#c0bbf4}
+.code-toolbar button{color:#d2ceff}
+.code-block{min-height:170px;padding:20px;background:#090b15!important;border:1px solid #3a3b5d!important;color:#d8d3ff!important;font-size:12px;line-height:1.9;border-radius:0 0 10px 10px}
+.detail-meta{margin-top:23px}
+.detail-meta>span{color:#a0a2bf}
+.detail-meta button{background:#292646!important;border:1px solid #49436f!important;color:#d1cbff!important;border-radius:7px}
+.privacy-callout{margin-top:27px;padding:14px 16px;border:1px solid #49416f!important;border-radius:11px;background:linear-gradient(110deg,#29264c,#1b1d35)!important;color:#c8c0ff!important}
+.privacy-callout p{color:#b2b1cc;font-size:11px;line-height:1.6}
+.privacy-callout strong{color:#e0dcff!important}
+.empty-state,.empty-detail{color:#a4a5bf}
+.empty-state strong,.empty-detail strong{color:#f0efff}
+.empty-state>span,.empty-detail>span{color:#b4aaff}
+.empty-state button{color:#c2baff}
+.page-footer{color:#999bb5}
+.page-footer i,.status-dot{background:#b3aaff}
+.modal-backdrop{background:#050610df!important;backdrop-filter:blur(10px)}
+.editor-modal{background:#15172a!important;border:1px solid #45436a!important;border-radius:18px!important;box-shadow:0 30px 100px #000b!important;color:#f1efff}
+.modal-heading h2{color:#f2f0ff}
+.editor-modal label{color:#c2c2dc}
+.editor-modal input,.editor-modal select,.editor-modal textarea{background:#0d1020!important;border:1px solid #3a3c5c!important;color:#f1efff!important;border-radius:9px!important}
+.editor-modal input::placeholder,.editor-modal textarea::placeholder{color:#8184a3}
+.editor-modal input:focus,.editor-modal select:focus,.editor-modal textarea:focus{border-color:#b4aaff!important;box-shadow:0 0 0 3px #a69bff22}
+.modal-footer{border-color:#353653}
+.modal-footer>span{color:#a3a4bd}
+.secondary-button{background:#272744!important;border:1px solid #49466f!important;color:#dedaff!important;border-radius:9px}
+:focus-visible{outline:2px solid #c5bcff!important;outline-offset:3px}
+@media(max-width:900px){.content{padding:42px 24px 26px}.library-layout{grid-template-columns:minmax(240px,.85fr) minmax(0,1.2fr)}}
+@media(max-width:680px){
+  .sidebar{background:#0d0f1d!important}
+  .topbar{padding:0 13px;background:#0d0f1dcc!important}
+  .content{padding:30px 13px 22px}
+  .page-intro{align-items:flex-start;gap:12px}
+  .snippet-total{padding:10px 12px}
+  .toolbar{flex-wrap:wrap}
+  .search-box{flex-basis:100%}
+  .toolbar select{flex:1;width:auto;min-width:0}
+  .library-layout{grid-template-columns:minmax(0,1fr)}
+  .detail-panel{padding:21px 17px;min-height:360px}
+  .snippet-list{max-height:340px;overflow:auto}
+  .top-actions{gap:5px}
+  .primary-button{padding:10px 11px!important}
+}

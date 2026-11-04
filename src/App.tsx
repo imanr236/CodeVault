@@ -115,7 +115,7 @@ function App() {
   useEffect(() => {
     if (!isEditorOpen) return;
     const dialog = editorRef.current;
-    const firstField = dialog?.querySelector<HTMLElement>("input:not([type='file']), select, textarea, button");
+    const firstField = dialog?.querySelector<HTMLElement>("button[aria-label='Close editor']");
     firstField?.focus();
 
     function handleKeyDown(event: KeyboardEvent) {

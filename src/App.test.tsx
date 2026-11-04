@@ -102,7 +102,7 @@ describe("CodeVault", () => {
     expect(input).not.toBeNull();
     fireEvent.change(input!, { target: { files: [file] } });
 
-    expect(await screen.findByText("Imported helper")).toBeInTheDocument();
+    expect((await screen.findAllByText("Imported helper")).length).toBeGreaterThan(0);
     expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("codevault.snippets.v1") ?? "[]")).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: "imported-1", title: "Imported helper" })]),

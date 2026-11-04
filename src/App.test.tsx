@@ -143,7 +143,7 @@ describe("CodeVault", () => {
     expect(screen.getByRole("searchbox", { name: "Search snippets, tags, or code" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Edit snippet" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete snippet" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "array", exact: false })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: /array/ })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: /All snippets/ })).toHaveAttribute("aria-current", "page");
   });
 

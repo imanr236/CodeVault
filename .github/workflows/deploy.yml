@@ -29,7 +29,7 @@ jobs:
       - name: Run dependency security audit (report only)
         run: |
           npm audit --json > audit-report.json || true
-          node -e 'const report = require("./audit-report.json"); const vulnerabilities = report.vulnerabilities || {}; console.log(JSON.stringify({ metadata: report.metadata?.vulnerabilities, error: report.error || null, vulnerabilities: Object.entries(vulnerabilities).map(([name, item]) => ({ name, severity: item.severity, isDirect: item.isDirect, range: item.range, via: item.via.map((entry) => typeof entry === "string" ? entry : { title: entry.title, url: entry.url, range: entry.range, severity: entry.severity }), fixAvailable: item.fixAvailable })) }, null, 2));'
+          node -e 'const report = require("./audit-report.json"); const vulnerabilities = report.vulnerabilities || {}; console.log(JSON.stringify({ metadata: report.metadata?.vulnerabilities, error: report.error || null, vulnerabilities: Object.entries(vulnerabilities).map(([name, item]) => ({ name, severity: item.severity, isDirect: item.isDirect, range: item.range, nodes: item.nodes, via: item.via.map((entry) => typeof entry === "string" ? entry : { title: entry.title, url: entry.url, range: entry.range, severity: entry.severity }), fixAvailable: item.fixAvailable })) }, null, 2));'
       - name: Run automated tests
         run: npm test
 

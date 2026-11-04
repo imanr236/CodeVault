@@ -137,6 +137,27 @@ describe("CodeVault", () => {
     expect(window.confirm).toHaveBeenCalledWith("Delete 3 selected snippets? This cannot be undone.");
   });
 
+  it("exposes accessible names and selected states for key controls", () => {
+    render(<App />);
+
+    expect(screen.getByRole("searchbox", { name: "Search snippets, tags, or code" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit snippet" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete snippet" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "array", exact: false })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "All snippets" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("opens an accessible editor dialog and closes it with Escape", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /New snippet/ })[0]);
+    expect(screen.getByRole("dialog", { name: "New snippet" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("exports a JSON backup", () => {
     const createObjectURL = vi.fn(() => "blob:codevault-test");
     const revokeObjectURL = vi.fn();

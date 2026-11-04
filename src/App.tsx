@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 
 type Snippet = {
   id: string;
@@ -152,7 +152,7 @@ function App() {
     URL.revokeObjectURL(url);
   }
 
-  function importBackup(event: React.ChangeEvent<HTMLInputElement>) {
+  function importBackup(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();

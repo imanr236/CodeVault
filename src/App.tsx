@@ -84,7 +84,7 @@ function App() {
     }).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }, [snippets, query, languageFilter, activeTag]);
 
-  const selected = snippets.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
+  const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
 
   function openNew() {
     setEditingId(null);

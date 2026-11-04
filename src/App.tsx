@@ -86,7 +86,7 @@ function loadSnippets(): Snippet[] {
       }];
     });
 
-    return valid.length ? valid : starterSnippets;
+    return valid;
   } catch {
     // Ignore invalid or unavailable local data and fall back to examples.
     return starterSnippets;
@@ -173,16 +173,22 @@ function App() {
     if (!window.confirm("Delete this snippet? This only removes it from this browser.")) return;
     const remaining = snippets.filter((item) => item.id !== id);
     setSnippets(remaining);
-    setSelectedId(remaining[0]?.id ?? null);
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      next.delete(id);
+      return next;
+    });
+    if (selectedId === id) setSelectedId(remaining[0]?.id ?? null);
   }
 
   function deleteSelected() {
-    const count = selectedIds.size;
+    const idsToDelete = new Set(filtered.filter((item) => selectedIds.has(item.id)).map((item) => item.id));
+    const count = idsToDelete.size;
     if (!count || !window.confirm(`Delete ${count} selected snippet${count === 1 ? "" : "s"}? This cannot be undone.`)) return;
-    const remaining = snippets.filter((item) => !selectedIds.has(item.id));
+    const remaining = snippets.filter((item) => !idsToDelete.has(item.id));
     setSnippets(remaining);
     setSelectedIds(new Set());
-    if (selected && selectedIds.has(selected.id)) setSelectedId(remaining[0]?.id ?? null);
+    if (selectedId && idsToDelete.has(selectedId)) setSelectedId(remaining[0]?.id ?? null);
   }
 
   async function copyCode() {
@@ -325,8 +331,8 @@ function App() {
               <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
               {filtered.length > 0 && <div className="bulk-toolbar">
                 <label><input type="checkbox" checked={filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id))} onChange={(e) => setSelectedIds(e.target.checked ? new Set(filtered.map((item) => item.id)) : new Set())} /> Select all</label>
-                <span>{selectedIds.size} selected</span>
-                <button disabled={!selectedIds.size} onClick={deleteSelected}>Delete selected</button>
+                <span>{filtered.filter((item) => selectedIds.has(item.id)).length} selected</span>
+                <button disabled={!filtered.some((item) => selectedIds.has(item.id))} onClick={deleteSelected}>Delete selected</button>
               </div>}
               {filtered.length ? filtered.map((item) => (
                 <div key={item.id} className="snippet-row">

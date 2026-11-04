@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -64,7 +64,7 @@ describe("CodeVault", () => {
     render(<App />);
 
     fireEvent.click(screen.getAllByText("Remove duplicates from an array")[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Edit snippet" }));
+    fireEvent.click(screen.getByTitle("Edit snippet"));
     fireEvent.change(screen.getByLabelText("Title"), {
       target: { value: "Remove duplicate values" },
     });
@@ -79,9 +79,79 @@ describe("CodeVault", () => {
     render(<App />);
 
     fireEvent.click(screen.getAllByText("Remove duplicates from an array")[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Delete snippet" }));
+    fireEvent.click(screen.getByTitle("Delete snippet"));
 
     expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
     expect(window.confirm).toHaveBeenCalledOnce();
+  });
+
+  it("imports a valid JSON backup and replaces the library", async () => {
+    render(<App />);
+    const backup = [{
+      id: "imported-1",
+      title: "Imported helper",
+      language: "TypeScript",
+      description: "Imported from a backup.",
+      code: "const answer: number = 42;",
+      tags: ["backup", "test"],
+      updatedAt: "2025-01-01T00:00:00.000Z",
+    }];
+    const file = new File([JSON.stringify(backup)], "backup.json", { type: "application/json" });
+    const input = document.querySelector('input[type="file"]');
+
+    expect(input).not.toBeNull();
+    fireEvent.change(input!, { target: { files: [file] } });
+
+    expect(await screen.findByText("Imported helper")).toBeInTheDocument();
+    expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("codevault.snippets.v1") ?? "[]")).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "imported-1", title: "Imported helper" })]),
+    );
+  });
+
+  it("rejects an invalid JSON backup without replacing saved snippets", async () => {
+    const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
+    render(<App />);
+    const file = new File(['{"not":"an array"}'], "invalid.json", { type: "application/json" });
+    const input = document.querySelector('input[type="file"]');
+
+    fireEvent.change(input!, { target: { files: [file] } });
+
+    await waitFor(() => expect(alert).toHaveBeenCalledWith(
+      "That file doesn't look like a valid CodeVault JSON backup.",
+    ));
+    expect(screen.getAllByText("Remove duplicates from an array").length).toBeGreaterThan(0);
+  });
+
+  it("selects and deletes multiple visible snippets", () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<App />);
+
+    fireEvent.click(screen.getByLabelText("Select all"));
+    expect(screen.getByText("3 selected")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Delete selected" }));
+
+    expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
+    expect(screen.queryByText("Read a JSON file")).not.toBeInTheDocument();
+    expect(screen.queryByText("Center an element")).not.toBeInTheDocument();
+    expect(window.confirm).toHaveBeenCalledWith("Delete 3 selected snippets? This cannot be undone.");
+  });
+
+  it("exports a JSON backup", () => {
+    const createObjectURL = vi.fn(() => "blob:codevault-test");
+    const revokeObjectURL = vi.fn();
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL,
+      revokeObjectURL,
+    });
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Export backup/ }));
+
+    expect(createObjectURL).toHaveBeenCalledOnce();
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:codevault-test");
+    expect(click).toHaveBeenCalledOnce();
   });
 });

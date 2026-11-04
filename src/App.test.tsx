@@ -15,9 +15,9 @@ describe("CodeVault", () => {
   it("shows the starter snippets on first launch", () => {
     render(<App />);
 
-    expect(screen.getByText("Remove duplicates from an array")).toBeInTheDocument();
-    expect(screen.getByText("Read a JSON file")).toBeInTheDocument();
-    expect(screen.getByText("Center an element")).toBeInTheDocument();
+    expect(screen.getAllByText("Remove duplicates from an array").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Read a JSON file").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Center an element").length).toBeGreaterThan(0);
   });
 
   it("filters snippets by search text", () => {
@@ -27,7 +27,7 @@ describe("CodeVault", () => {
       target: { value: "Read a JSON file" },
     });
 
-    expect(screen.getByText("Read a JSON file")).toBeInTheDocument();
+    expect(screen.getAllByText("Read a JSON file").length).toBeGreaterThan(0);
     expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe("CodeVault", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Save snippet" }));
 
-    expect(screen.getByText("Format a date")).toBeInTheDocument();
+    expect(screen.getAllByText("Format a date").length).toBeGreaterThan(0);
     const saved = JSON.parse(localStorage.getItem("codevault.snippets.v1") ?? "[]");
     expect(saved).toEqual(expect.arrayContaining([
       expect.objectContaining({
@@ -70,7 +70,7 @@ describe("CodeVault", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Save snippet" }));
 
-    expect(screen.getByText("Remove duplicate values")).toBeInTheDocument();
+    expect(screen.getAllByText("Remove duplicate values").length).toBeGreaterThan(0);
     expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();
   });
 

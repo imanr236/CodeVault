@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Run dependency security audit (report only)
         run: |
           npm audit --json > audit-report.json || true
@@ -43,18 +43,7 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm install
-      - name: Commit npm lockfile
-        run: |
-          git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "package-lock.json is already up to date"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Add npm lockfile"
-          git push
+        run: npm ci
       - name: Build app
         run: npm run build
       - name: Upload Pages artifact

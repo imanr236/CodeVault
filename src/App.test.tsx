@@ -150,13 +150,15 @@ describe("CodeVault", () => {
   it("opens an accessible editor dialog and closes it with Escape", () => {
     render(<App />);
 
-    fireEvent.click(screen.getAllByRole("button", { name: /New snippet/ })[0]);
+    const opener = screen.getAllByRole("button", { name: /New snippet/ })[0];
+    opener.focus();
+    fireEvent.click(opener);
     expect(screen.getByRole("dialog", { name: "New snippet" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Close editor" })).toHaveFocus();
 
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /New snippet/ })[0]).toHaveFocus();
+    expect(opener).toHaveFocus();
   });
 
   it("keeps keyboard focus inside the editor dialog", () => {

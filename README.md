@@ -2,6 +2,8 @@
 
 > A local-first library for saving, organizing, and reusing code snippets.
 
+[![Deploy CodeVault to GitHub Pages](https://github.com/imanr236/CodeVault/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/imanr236/CodeVault/actions/workflows/deploy.yml)
+
 CodeVault is a small React + TypeScript application. It helps you keep useful snippets in one place, search them, organize them with tags, and copy them when needed.
 
 ## Features

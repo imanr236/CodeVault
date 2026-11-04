@@ -63,7 +63,7 @@ describe("CodeVault", () => {
   it("edits an existing snippet", () => {
     render(<App />);
 
-    fireEvent.click(screen.getByText("Remove duplicates from an array"));
+    fireEvent.click(screen.getAllByText("Remove duplicates from an array")[0]);
     fireEvent.click(screen.getByRole("button", { name: "Edit snippet" }));
     fireEvent.change(screen.getByLabelText("Title"), {
       target: { value: "Remove duplicate values" },
@@ -78,7 +78,7 @@ describe("CodeVault", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<App />);
 
-    fireEvent.click(screen.getByText("Remove duplicates from an array"));
+    fireEvent.click(screen.getAllByText("Remove duplicates from an array")[0]);
     fireEvent.click(screen.getByRole("button", { name: "Delete snippet" }));
 
     expect(screen.queryByText("Remove duplicates from an array")).not.toBeInTheDocument();

@@ -46,11 +46,51 @@ const starterSnippets: Snippet[] = [
 function loadSnippets(): Snippet[] {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved) as Snippet[];
+    if (!saved) return starterSnippets;
+
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return starterSnippets;
+
+    const usedIds = new Set<string>();
+    const valid = parsed.flatMap((value: unknown, index: number): Snippet[] => {
+      if (!value || typeof value !== "object") return [];
+      const record = value as Record<string, unknown>;
+      if (
+        typeof record.title !== "string" ||
+        typeof record.language !== "string" ||
+        typeof record.code !== "string"
+      ) return [];
+
+      const candidateId =
+        typeof record.id === "string" && record.id.trim()
+          ? record.id.trim()
+          : `saved-${index}`;
+      const id = usedIds.has(candidateId) ? `saved-${index}-${usedIds.size}` : candidateId;
+      usedIds.add(id);
+
+      const updatedAt =
+        typeof record.updatedAt === "string" && !Number.isNaN(Date.parse(record.updatedAt))
+          ? record.updatedAt
+          : new Date().toISOString();
+
+      return [{
+        id,
+        title: record.title,
+        language: record.language,
+        code: record.code,
+        description: typeof record.description === "string" ? record.description : "",
+        tags: Array.isArray(record.tags)
+          ? Array.from(new Set(record.tags.filter((tag): tag is string => typeof tag === "string").map((tag) => tag.trim().toLowerCase()).filter(Boolean)))
+          : [],
+        updatedAt,
+      }];
+    });
+
+    return valid.length ? valid : starterSnippets;
   } catch {
-    // Ignore invalid local data and fall back to examples.
+    // Ignore invalid or unavailable local data and fall back to examples.
+    return starterSnippets;
   }
-  return starterSnippets;
 }
 
 function App() {

@@ -156,6 +156,21 @@ describe("CodeVault", () => {
 
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /New snippet/ })[0]).toHaveFocus();
+  });
+
+  it("keeps keyboard focus inside the editor dialog", () => {
+    render(<App />);
+    fireEvent.click(screen.getAllByRole("button", { name: /New snippet/ })[0]);
+    const dialog = screen.getByRole("dialog");
+    const saveButton = screen.getByRole("button", { name: "Save snippet" });
+    saveButton.focus();
+    fireEvent.keyDown(dialog, { key: "Tab" });
+    expect(screen.getByLabelText("Title")).toHaveFocus();
+
+    screen.getByLabelText("Title").focus();
+    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    expect(saveButton).toHaveFocus();
   });
 
   it("exports a JSON backup", () => {

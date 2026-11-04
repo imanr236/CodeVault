@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Snippet = {
   id: string;
@@ -104,6 +104,8 @@ function App() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const editorRef = useRef<HTMLFormElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const [form, setForm] = useState({ title: "", language: "JavaScript", description: "", code: "", tags: "" });
 
   useEffect(() => {
@@ -112,11 +114,38 @@ function App() {
 
   useEffect(() => {
     if (!isEditorOpen) return;
+    const dialog = editorRef.current;
+    const firstField = dialog?.querySelector<HTMLElement>("input:not([type='file']), select, textarea, button");
+    firstField?.focus();
+
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setIsEditorOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsEditorOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !dialog) return;
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+        "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+      )).filter((element) => element.getAttribute("aria-hidden") !== "true");
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
+
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
+    };
   }, [isEditorOpen]);
 
   const allTags = useMemo(
@@ -142,12 +171,14 @@ function App() {
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
 
   function openNew() {
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setEditingId(null);
     setForm({ title: "", language: "JavaScript", description: "", code: "", tags: "" });
     setIsEditorOpen(true);
   }
 
   function openEdit(item: Snippet) {
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setEditingId(item.id);
     setForm({
       title: item.title,
@@ -281,7 +312,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <aside className="sidebar" aria-label="Workspace navigation">
         <a className="brand" href="#" aria-label="CodeVault home">
           <span className="brand-mark">⌘</span>
           <span>code<span className="brand-accent">vault</span></span>
@@ -336,8 +367,8 @@ function App() {
           </div>
 
           <div className="library-layout">
-            <section className="snippet-list">
-              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button type="button" onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
+            <section className="snippet-list" aria-label="Snippet library">
+              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><span className="sr-only" role="status" aria-live="polite" aria-atomic="true">{filtered.length} snippets shown</span><button type="button" onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
               {filtered.length > 0 && <div className="bulk-toolbar">
                 <label><input type="checkbox" aria-label="Select all visible snippets" checked={filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id))} onChange={(e) => setSelectedIds(e.target.checked ? new Set(filtered.map((item) => item.id)) : new Set())} /> Select all</label>
                 <span>{filtered.filter((item) => selectedIds.has(item.id)).length} selected</span>
@@ -347,7 +378,7 @@ function App() {
                 <div key={item.id} className="snippet-row">
                   <input className="snippet-select" type="checkbox" aria-label={`Select ${item.title}`} checked={selectedIds.has(item.id)} onChange={() => setSelectedIds((current) => { const next = new Set(current); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next; })} />
                   <button type="button" aria-pressed={selected?.id === item.id} className={selected?.id === item.id ? "snippet-card chosen" : "snippet-card"} onClick={() => setSelectedId(item.id)}>
-                    <div className="snippet-card-top"><span className="language-pill">{item.language}</span><span className="card-dots">···</span></div>
+                    <div className="snippet-card-top"><span className="language-pill">{item.language}</span><span className="card-dots" aria-hidden="true">···</span></div>
                     <strong>{item.title}</strong>
                     <p>{item.description || "No description added."}</p>
                     <div className="snippet-card-bottom"><span>{item.tags.slice(0, 2).map((tag) => <i key={tag}>#{tag}</i>)}</span><time>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
@@ -356,7 +387,7 @@ function App() {
               )) : <div className="empty-state"><span>⌕</span><strong>No snippets found</strong><p>Try another search or clear your filters.</p><button type="button" onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); }}>Clear filters</button></div>}
             </section>
 
-            <section className="detail-panel">
+            <section className="detail-panel" aria-label="Snippet details">
               {selected ? <>
                 <div className="detail-header">
                   <div><span className="language-pill">{selected.language}</span><div className="detail-date">UPDATED {new Date(selected.updatedAt).toLocaleDateString()}</div></div>
@@ -376,7 +407,7 @@ function App() {
       </main>
 
       {isEditorOpen && <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setIsEditorOpen(false); }}>
-        <form className="editor-modal" role="dialog" aria-modal="true" aria-labelledby="editor-dialog-title" onSubmit={saveSnippet}>
+        <form ref={editorRef} className="editor-modal" role="dialog" aria-modal="true" aria-labelledby="editor-dialog-title" onSubmit={saveSnippet}>
           <div className="modal-heading"><div><span className="eyebrow">{editingId ? "UPDATE YOUR LIBRARY" : "GROW YOUR LIBRARY"}</span><h2 id="editor-dialog-title">{editingId ? "Edit snippet" : "New snippet"}</h2></div><button type="button" className="icon-button" aria-label="Close editor" onClick={() => setIsEditorOpen(false)}>✕</button></div>
           <label>Title<input autoFocus required maxLength={90} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Format a date" /></label>
           <div className="form-row"><label>Language<select value={form.language} onChange={(e) => setForm({ ...form, language: e.target.value })}>{languages.map((language) => <option key={language}>{language}</option>)}</select></label><label>Tags <span className="muted">(comma separated)</span><input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="utility, dates" /></label></div>

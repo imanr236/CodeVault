@@ -10,6 +10,8 @@ CodeVault is a small React + TypeScript application. It helps you keep useful sn
 - Choose a language and add comma-separated tags
 - Search titles, descriptions, code, languages, and tags
 - Filter by language or tag
+- Sort by newest, oldest, or title
+- Select and delete multiple visible snippets at once
 - Copy code to the clipboard
 - Export your library as a JSON backup
 - Import a previously exported JSON backup
@@ -37,6 +39,12 @@ npm run preview
 ```
 
 The production files are generated in the `dist/` directory.
+
+## GitHub Pages deployment
+
+The repository includes a GitHub Actions workflow at `.github/workflows/deploy.yml`. It builds the app when changes are pushed to `main` and deploys the `dist/` output to GitHub Pages. The Vite base path is configured for this repository at `/CodeVault/`.
+
+To enable deployment, open the repository's **Settings → Pages** and set the build and deployment source to **GitHub Actions**. Check the **Actions** tab for the build and deployment result after a push.
 
 ## Data and privacy
 

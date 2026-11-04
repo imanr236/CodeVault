@@ -110,6 +110,15 @@ function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snippets));
   }, [snippets]);
 
+  useEffect(() => {
+    if (!isEditorOpen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsEditorOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isEditorOpen]);
+
   const allTags = useMemo(
     () => ["All", ...Array.from(new Set(snippets.flatMap((item) => item.tags))).sort()],
     [snippets]
@@ -278,11 +287,11 @@ function App() {
           <span>code<span className="brand-accent">vault</span></span>
         </a>
         <div className="workspace-label">WORKSPACE</div>
-        <button className="nav-item active"><span>▦</span> All snippets <span className="nav-count">{snippets.length}</span></button>
+        <button type="button" className="nav-item active" aria-current="page"><span aria-hidden="true">▦</span> All snippets <span className="nav-count">{snippets.length}</span></button>
         <div className="sidebar-section">
           <div className="sidebar-heading">COLLECTIONS</div>
           {allTags.slice(1).length ? allTags.slice(1).map((tag) => (
-            <button key={tag} className={activeTag === tag ? "tag-nav selected" : "tag-nav"} onClick={() => setActiveTag(activeTag === tag ? "All" : tag)}>
+            <button type="button" key={tag} aria-pressed={activeTag === tag} className={activeTag === tag ? "tag-nav selected" : "tag-nav"} onClick={() => setActiveTag(activeTag === tag ? "All" : tag)}>
               <span className="tag-dot" /> {tag}
             </button>
           )) : <p className="muted small sidebar-hint">Tags you add will appear here.</p>}
@@ -297,9 +306,9 @@ function App() {
         <header className="topbar">
           <div className="breadcrumbs">Workspace <span>/</span> <strong>All snippets</strong></div>
           <div className="top-actions">
-            <label className="text-action import-action">Import <input type="file" accept="application/json,.json" onChange={importBackup} /></label>
-            <button className="text-action" onClick={exportBackup}>Export backup ↓</button>
-            <button className="primary-button" onClick={openNew}><span>＋</span> New snippet</button>
+            <label className="text-action import-action">Import <input aria-label="Import JSON backup" type="file" accept="application/json,.json" onChange={importBackup} /></label>
+            <button type="button" className="text-action" onClick={exportBackup}>Export backup ↓</button>
+            <button type="button" className="primary-button" onClick={openNew}><span>＋</span> New snippet</button>
           </div>
         </header>
 
@@ -314,7 +323,7 @@ function App() {
           </div>
 
           <div className="toolbar">
-            <div className="search-box"><span>⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search snippets, tags, or code..." /></div>
+            <div className="search-box"><span aria-hidden="true">⌕</span><input aria-label="Search snippets, tags, or code" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search snippets, tags, or code..." /></div>
             <select value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} aria-label="Filter by language">
               <option>All languages</option>
               {languages.map((language) => <option key={language}>{language}</option>)}
@@ -328,38 +337,38 @@ function App() {
 
           <div className="library-layout">
             <section className="snippet-list">
-              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
+              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button type="button" onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
               {filtered.length > 0 && <div className="bulk-toolbar">
-                <label><input type="checkbox" checked={filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id))} onChange={(e) => setSelectedIds(e.target.checked ? new Set(filtered.map((item) => item.id)) : new Set())} /> Select all</label>
+                <label><input type="checkbox" aria-label="Select all visible snippets" checked={filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id))} onChange={(e) => setSelectedIds(e.target.checked ? new Set(filtered.map((item) => item.id)) : new Set())} /> Select all</label>
                 <span>{filtered.filter((item) => selectedIds.has(item.id)).length} selected</span>
-                <button disabled={!filtered.some((item) => selectedIds.has(item.id))} onClick={deleteSelected}>Delete selected</button>
+                <button type="button" disabled={!filtered.some((item) => selectedIds.has(item.id))} onClick={deleteSelected}>Delete selected</button>
               </div>}
               {filtered.length ? filtered.map((item) => (
                 <div key={item.id} className="snippet-row">
                   <input className="snippet-select" type="checkbox" aria-label={`Select ${item.title}`} checked={selectedIds.has(item.id)} onChange={() => setSelectedIds((current) => { const next = new Set(current); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next; })} />
-                  <button className={selected?.id === item.id ? "snippet-card chosen" : "snippet-card"} onClick={() => setSelectedId(item.id)}>
+                  <button type="button" aria-pressed={selected?.id === item.id} className={selected?.id === item.id ? "snippet-card chosen" : "snippet-card"} onClick={() => setSelectedId(item.id)}>
                     <div className="snippet-card-top"><span className="language-pill">{item.language}</span><span className="card-dots">···</span></div>
                     <strong>{item.title}</strong>
                     <p>{item.description || "No description added."}</p>
                     <div className="snippet-card-bottom"><span>{item.tags.slice(0, 2).map((tag) => <i key={tag}>#{tag}</i>)}</span><time>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
                   </button>
                 </div>
-              )) : <div className="empty-state"><span>⌕</span><strong>No snippets found</strong><p>Try another search or clear your filters.</p><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); }}>Clear filters</button></div>}
+              )) : <div className="empty-state"><span>⌕</span><strong>No snippets found</strong><p>Try another search or clear your filters.</p><button type="button" onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); }}>Clear filters</button></div>}
             </section>
 
             <section className="detail-panel">
               {selected ? <>
                 <div className="detail-header">
                   <div><span className="language-pill">{selected.language}</span><div className="detail-date">UPDATED {new Date(selected.updatedAt).toLocaleDateString()}</div></div>
-                  <div className="detail-actions"><button className="icon-button" title="Edit snippet" onClick={() => openEdit(selected)}>✎</button><button className="icon-button danger" title="Delete snippet" onClick={() => deleteSnippet(selected.id)}>⌫</button></div>
+                  <div className="detail-actions"><button type="button" className="icon-button" title="Edit snippet" aria-label="Edit snippet" onClick={() => openEdit(selected)}>✎</button><button type="button" className="icon-button danger" title="Delete snippet" aria-label="Delete snippet" onClick={() => deleteSnippet(selected.id)}>⌫</button></div>
                 </div>
                 <h2>{selected.title}</h2>
                 <p className="detail-description">{selected.description || "No description added."}</p>
-                <div className="code-toolbar"><span><i /> SOURCE CODE</span><button onClick={copyCode}>{copied ? "✓ Copied" : "▢ Copy code"}</button></div>
-                <pre className="code-block"><code>{selected.code}</code></pre>
-                <div className="detail-meta"><span>TAGGED IN</span><div>{selected.tags.length ? selected.tags.map((tag) => <button key={tag} onClick={() => setActiveTag(tag)}>#{tag}</button>) : <em>No tags</em>}</div></div>
+                <div className="code-toolbar"><span><i /> SOURCE CODE</span><button type="button" onClick={copyCode} aria-live="polite">{copied ? "✓ Copied" : "▢ Copy code"}</button></div>
+                <pre className="code-block" aria-label={`Source code for ${selected.title}`}><code>{selected.code}</code></pre>
+                <div className="detail-meta"><span>TAGGED IN</span><div>{selected.tags.length ? selected.tags.map((tag) => <button type="button" key={tag} aria-pressed={activeTag === tag} onClick={() => setActiveTag(activeTag === tag ? "All" : tag)}>#{tag}</button>) : <em>No tags</em>}</div></div>
                 <div className="privacy-callout"><span>◈</span><p><strong>Your code stays yours.</strong> Snippets are saved in this browser only. They are not uploaded to a server.</p></div>
-              </> : <div className="empty-detail"><span>⌘</span><strong>Select a snippet</strong><p>Choose an item from your library or create a new one.</p><button className="primary-button" onClick={openNew}>＋ New snippet</button></div>}
+              </> : <div className="empty-detail"><span>⌘</span><strong>Select a snippet</strong><p>Choose an item from your library or create a new one.</p><button type="button" className="primary-button" onClick={openNew}>＋ New snippet</button></div>}
             </section>
           </div>
           <footer className="page-footer"><span>MADE FOR BUILDERS, ONE SNIPPET AT A TIME.</span><span>LOCAL-FIRST STORAGE <i /></span></footer>
@@ -367,9 +376,9 @@ function App() {
       </main>
 
       {isEditorOpen && <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setIsEditorOpen(false); }}>
-        <form className="editor-modal" onSubmit={saveSnippet}>
-          <div className="modal-heading"><div><span className="eyebrow">{editingId ? "UPDATE YOUR LIBRARY" : "GROW YOUR LIBRARY"}</span><h2>{editingId ? "Edit snippet" : "New snippet"}</h2></div><button type="button" className="icon-button" onClick={() => setIsEditorOpen(false)}>✕</button></div>
-          <label>Title<input required maxLength={90} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Format a date" /></label>
+        <form className="editor-modal" role="dialog" aria-modal="true" aria-labelledby="editor-dialog-title" onSubmit={saveSnippet}>
+          <div className="modal-heading"><div><span className="eyebrow">{editingId ? "UPDATE YOUR LIBRARY" : "GROW YOUR LIBRARY"}</span><h2 id="editor-dialog-title">{editingId ? "Edit snippet" : "New snippet"}</h2></div><button type="button" className="icon-button" aria-label="Close editor" onClick={() => setIsEditorOpen(false)}>✕</button></div>
+          <label>Title<input autoFocus required maxLength={90} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Format a date" /></label>
           <div className="form-row"><label>Language<select value={form.language} onChange={(e) => setForm({ ...form, language: e.target.value })}>{languages.map((language) => <option key={language}>{language}</option>)}</select></label><label>Tags <span className="muted">(comma separated)</span><input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="utility, dates" /></label></div>
           <label>Description<input maxLength={180} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What does this snippet do?" /></label>
           <label>Code<textarea required rows={9} spellCheck={false} value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} placeholder="Paste your code here..." /></label>

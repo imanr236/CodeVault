@@ -57,6 +57,7 @@ function App() {
   const [snippets, setSnippets] = useState<Snippet[]>(loadSnippets);
   const [query, setQuery] = useState("");
   const [languageFilter, setLanguageFilter] = useState("All languages");
+  const [sortOrder, setSortOrder] = useState("newest");
   const [activeTag, setActiveTag] = useState("All");
   const [selectedId, setSelectedId] = useState<string | null>(starterSnippets[0].id);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -81,8 +82,12 @@ function App() {
       const matchesLanguage = languageFilter === "All languages" || item.language === languageFilter;
       const matchesTag = activeTag === "All" || item.tags.includes(activeTag);
       return matchesQuery && matchesLanguage && matchesTag;
-    }).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-  }, [snippets, query, languageFilter, activeTag]);
+    }).sort((a, b) => {
+      if (sortOrder === "oldest") return a.updatedAt.localeCompare(b.updatedAt);
+      if (sortOrder === "title") return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+      return b.updatedAt.localeCompare(a.updatedAt);
+    });
+  }, [snippets, query, languageFilter, activeTag, sortOrder]);
 
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
 
@@ -255,6 +260,11 @@ function App() {
             <select value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} aria-label="Filter by language">
               <option>All languages</option>
               {languages.map((language) => <option key={language}>{language}</option>)}
+            </select>
+            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} aria-label="Sort snippets">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option>
             </select>
           </div>
 

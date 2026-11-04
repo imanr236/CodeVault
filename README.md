@@ -1,58 +1,77 @@
 # CodeVault
 
-> A place to collect, organize, and share reusable code snippets.
+> A local-first library for saving, organizing, and reusing code snippets.
 
-CodeVault is a project exploring a simple workflow for keeping useful snippets, scripts, and small programming examples organized and easy to find.
+CodeVault is a small React + TypeScript application. It helps you keep useful snippets in one place, search them, organize them with tags, and copy them when needed.
 
-## Project status
+## Features
 
-**Early-stage concept / documentation.** The repository does not currently contain an implemented application. The features below describe the intended direction, not functionality that is available today.
+- Create, edit, and delete snippets
+- Choose a language and add comma-separated tags
+- Search titles, descriptions, code, languages, and tags
+- Filter by language or tag
+- Copy code to the clipboard
+- Export your library as a JSON backup
+- Import a previously exported JSON backup
+- Starter examples included on first launch
+- Responsive dark interface
 
-## Why CodeVault?
+## Run locally
 
-Useful code often ends up scattered across notes, chat messages, and old projects. CodeVault aims to make those small, reusable pieces easier to store, understand, and revisit.
+**Requirements:** Node.js 18 or newer and npm.
 
-## Planned features
+```bash
+git clone https://github.com/imanr236/CodeVault.git
+cd CodeVault
+npm install
+npm run dev
+```
 
-- **Snippet library** — create and organize reusable code snippets.
-- **Search and tags** — find examples by language, topic, or keyword.
-- **Readable snippets** — include titles, descriptions, and usage notes.
-- **Sharing** — make selected snippets easy to share.
-- **Safe-by-design handling** — avoid publishing secrets and provide clear visibility controls.
+Open the local URL printed by Vite (usually `http://localhost:5173`).
 
-See the [project roadmap](docs/ROADMAP.md) for a staged plan.
+## Production build
 
-## Possible snippet format
+```bash
+npm run build
+npm run preview
+```
 
-A future snippet could include:
+The production files are generated in the `dist/` directory.
 
-| Field | Purpose |
-| --- | --- |
-| Title | Short, descriptive name |
-| Language | Programming language |
-| Description | What the snippet does |
-| Code | The snippet content |
-| Tags | Topics used for filtering |
-| Notes | Example usage, limitations, or dependencies |
+## Data and privacy
 
-## Development
+CodeVault stores snippets in the browser's `localStorage`. There is no backend and snippets are not automatically uploaded or synchronized between devices.
 
-There is no runnable application or setup command in this repository yet. Implementation choices, installation instructions, and contribution steps will be added when the first working version is committed.
+- Export a JSON backup regularly if your snippets matter.
+- Import a backup to restore or move your library.
+- Clearing this site's browser storage can permanently remove locally saved snippets.
+- Do not store passwords, API keys, access tokens, or other secrets in snippets.
 
-## Contributing
+## Project structure
 
-Ideas, issue reports, and constructive suggestions are welcome. For now, open an issue describing:
+```
+CodeVault/
+├── index.html
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── styles.css
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
 
-1. The problem you want CodeVault to solve.
-2. The proposed improvement.
-3. Any example that helps explain the idea.
+## Current limitations
 
-Please do not submit passwords, API keys, access tokens, or other private information.
+- No account system or cloud synchronization
+- No multi-user sharing
+- No server-side storage
+- No automated test suite yet
+
+## Roadmap
+
+See [docs/ROADMAP.md](docs/ROADMAP.md) for planned improvements.
 
 ## License
 
-No license has been added yet. Until a license is selected, the repository's contents should not be assumed to be available for reuse.
-
----
-
-*CodeVault is a learning project. Its scope and implementation may evolve as development progresses.*
+No license has been added yet. Until a license is selected, do not assume the code is available for reuse.

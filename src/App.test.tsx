@@ -144,7 +144,7 @@ describe("CodeVault", () => {
     expect(screen.getByRole("button", { name: "Edit snippet" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete snippet" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "array", exact: false })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "All snippets" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: /All snippets/ })).toHaveAttribute("aria-current", "page");
   });
 
   it("opens an accessible editor dialog and closes it with Escape", () => {

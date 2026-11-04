@@ -152,7 +152,7 @@ describe("CodeVault", () => {
 
     fireEvent.click(screen.getAllByRole("button", { name: /New snippet/ })[0]);
     expect(screen.getByRole("dialog", { name: "New snippet" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Title")).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Close editor" })).toHaveFocus();
 
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -166,9 +166,9 @@ describe("CodeVault", () => {
     const saveButton = screen.getByRole("button", { name: "Save snippet" });
     saveButton.focus();
     fireEvent.keyDown(dialog, { key: "Tab" });
-    expect(screen.getByLabelText("Title")).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Close editor" })).toHaveFocus();
 
-    screen.getByLabelText("Title").focus();
+    screen.getByRole("button", { name: "Close editor" }).focus();
     fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
     expect(saveButton).toHaveFocus();
   });

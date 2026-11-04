@@ -58,6 +58,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [languageFilter, setLanguageFilter] = useState("All languages");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeTag, setActiveTag] = useState("All");
   const [selectedId, setSelectedId] = useState<string | null>(starterSnippets[0].id);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -135,6 +136,15 @@ function App() {
     setSelectedId(remaining[0]?.id ?? null);
   }
 
+  function deleteSelected() {
+    const count = selectedIds.size;
+    if (!count || !window.confirm(`Delete ${count} selected snippet${count === 1 ? "" : "s"}? This cannot be undone.`)) return;
+    const remaining = snippets.filter((item) => !selectedIds.has(item.id));
+    setSnippets(remaining);
+    setSelectedIds(new Set());
+    if (selected && selectedIds.has(selected.id)) setSelectedId(remaining[0]?.id ?? null);
+  }
+
   async function copyCode() {
     if (!selected) return;
     try {
@@ -204,6 +214,8 @@ function App() {
         setQuery("");
         setLanguageFilter("All languages");
         setActiveTag("All");
+        setSortOrder("newest");
+        setSelectedIds(new Set());
       } catch {
         window.alert("That file doesn't look like a valid CodeVault JSON backup.");
       }
@@ -270,14 +282,22 @@ function App() {
 
           <div className="library-layout">
             <section className="snippet-list">
-              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); }}>Reset filters</button></div>
+              <div className="list-heading"><span>LIBRARY <b>{filtered.length}</b></span><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); setSortOrder("newest"); }}>Reset filters</button></div>
+              {filtered.length > 0 && <div className="bulk-toolbar">
+                <label><input type="checkbox" checked={filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id))} onChange={(e) => setSelectedIds(e.target.checked ? new Set(filtered.map((item) => item.id)) : new Set())} /> Select all</label>
+                <span>{selectedIds.size} selected</span>
+                <button disabled={!selectedIds.size} onClick={deleteSelected}>Delete selected</button>
+              </div>}
               {filtered.length ? filtered.map((item) => (
-                <button key={item.id} className={selected?.id === item.id ? "snippet-card chosen" : "snippet-card"} onClick={() => setSelectedId(item.id)}>
-                  <div className="snippet-card-top"><span className="language-pill">{item.language}</span><span className="card-dots">···</span></div>
-                  <strong>{item.title}</strong>
-                  <p>{item.description || "No description added."}</p>
-                  <div className="snippet-card-bottom"><span>{item.tags.slice(0, 2).map((tag) => <i key={tag}>#{tag}</i>)}</span><time>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
-                </button>
+                <div key={item.id} className="snippet-row">
+                  <input className="snippet-select" type="checkbox" aria-label={`Select ${item.title}`} checked={selectedIds.has(item.id)} onChange={() => setSelectedIds((current) => { const next = new Set(current); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next; })} />
+                  <button className={selected?.id === item.id ? "snippet-card chosen" : "snippet-card"} onClick={() => setSelectedId(item.id)}>
+                    <div className="snippet-card-top"><span className="language-pill">{item.language}</span><span className="card-dots">···</span></div>
+                    <strong>{item.title}</strong>
+                    <p>{item.description || "No description added."}</p>
+                    <div className="snippet-card-bottom"><span>{item.tags.slice(0, 2).map((tag) => <i key={tag}>#{tag}</i>)}</span><time>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
+                  </button>
+                </div>
               )) : <div className="empty-state"><span>⌕</span><strong>No snippets found</strong><p>Try another search or clear your filters.</p><button onClick={() => { setQuery(""); setLanguageFilter("All languages"); setActiveTag("All"); }}>Clear filters</button></div>}
             </section>
 

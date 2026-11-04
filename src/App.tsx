@@ -158,13 +158,44 @@ function App() {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const parsed = JSON.parse(String(reader.result));
-        if (!Array.isArray(parsed) || !parsed.every((item) =>
-          item && typeof item.title === "string" && typeof item.code === "string" &&
-          typeof item.language === "string" && Array.isArray(item.tags)
-        )) throw new Error("Invalid backup");
-        setSnippets(parsed as Snippet[]);
-        setSelectedId(parsed[0]?.id ?? null);
+        const parsed: unknown = JSON.parse(String(reader.result));
+        if (!Array.isArray(parsed)) throw new Error("Invalid backup");
+
+        const usedIds = new Set<string>();
+        const normalized: Snippet[] = parsed.map((item: unknown) => {
+          if (!item || typeof item !== "object") throw new Error("Invalid snippet");
+          const record = item as Record<string, unknown>;
+          if (
+            typeof record.title !== "string" ||
+            typeof record.code !== "string" ||
+            typeof record.language !== "string" ||
+            !Array.isArray(record.tags) ||
+            !record.tags.every((tag): tag is string => typeof tag === "string")
+          ) throw new Error("Invalid snippet");
+
+          const candidateId = typeof record.id === "string" && record.id.trim()
+            ? record.id.trim()
+            : crypto.randomUUID();
+          const id = usedIds.has(candidateId) ? crypto.randomUUID() : candidateId;
+          usedIds.add(id);
+
+          const parsedDate = typeof record.updatedAt === "string" && !Number.isNaN(Date.parse(record.updatedAt))
+            ? record.updatedAt
+            : new Date().toISOString();
+
+          return {
+            id,
+            title: record.title,
+            language: record.language,
+            code: record.code,
+            description: typeof record.description === "string" ? record.description : "",
+            tags: Array.from(new Set(record.tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean))),
+            updatedAt: parsedDate,
+          };
+        });
+
+        setSnippets(normalized);
+        setSelectedId(normalized[0]?.id ?? null);
         setQuery("");
         setLanguageFilter("All languages");
         setActiveTag("All");

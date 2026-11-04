@@ -31,6 +31,22 @@ npm run dev
 
 Open the local URL printed by Vite (usually `http://localhost:5173`).
 
+## Automated tests
+
+Run the test suite once:
+
+```bash
+npm test
+```
+
+Run tests in watch mode while developing:
+
+```bash
+npm run test:watch
+```
+
+GitHub Actions runs the test suite on every push to `main`. The Pages deployment waits for both tests and the production build to pass.
+
 ## Production build
 
 ```bash
@@ -74,7 +90,7 @@ CodeVault/
 - No account system or cloud synchronization
 - No multi-user sharing
 - No server-side storage
-- No automated test suite yet
+- Automated component tests for core snippet workflows
 
 ## Roadmap
 

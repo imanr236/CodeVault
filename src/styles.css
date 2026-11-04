@@ -61,6 +61,7 @@ h1{font:700 35px Manrope,sans-serif;letter-spacing:-1.7px;margin:8px 0 5px;color
 .list-heading{height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #29332b}
 .list-heading b{color:#c4f58e;font-weight:400;margin-left:5px}
 .list-heading button{border:0;background:none;color:#7e8b80;font:10px 'DM Sans',sans-serif}
+.bulk-toolbar{display:flex;align-items:center;gap:10px;padding:9px 13px;border-bottom:1px solid #29332b;color:#89958b;font-size:10px}.bulk-toolbar label{display:flex;align-items:center;gap:6px}.bulk-toolbar input,.snippet-select{accent-color:#b8f36b}.bulk-toolbar span{margin-left:auto}.bulk-toolbar button{border:1px solid #654040;background:#2a1d1d;color:#e9aaaa;border-radius:4px;padding:5px 8px;font-size:10px}.bulk-toolbar button:disabled{opacity:.4;cursor:not-allowed}.snippet-row{display:flex;align-items:stretch;border-bottom:1px solid #252e27}.snippet-select{margin:0 0 0 13px;width:14px;flex-shrink:0}.snippet-row .snippet-card{border-bottom:0;flex:1;min-width:0}
 .snippet-card{width:100%;text-align:left;border:0;border-bottom:1px solid #252e27;background:transparent;color:#e7ece7;padding:15px 16px 13px;display:block}
 .snippet-card:hover{background:#19221b}
 .snippet-card.chosen{background:#1b261d;box-shadow:inset 2px 0 #b8f36b}

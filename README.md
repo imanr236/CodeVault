@@ -119,7 +119,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## License
 
-No license has been added yet. Until a license is selected, do not assume the code is available for reuse.
+CodeVault is released under the [MIT License](LICENSE). You may use, copy, modify, distribute, and include the software in commercial projects, provided that the copyright and license notices are retained.
 
 ---
 

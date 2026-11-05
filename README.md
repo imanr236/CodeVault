@@ -1,10 +1,16 @@
 # CodeVault
 
-> A local-first library for saving, organizing, and reusing code snippets.
+> A local-first code snippet manager for developers who want to save, search, organize, and reuse useful code.
 
 [![Deploy CodeVault to GitHub Pages](https://github.com/imanr236/CodeVault/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/imanr236/CodeVault/actions/workflows/deploy.yml)
 
-CodeVault is a small React + TypeScript application. It helps you keep useful snippets in one place, search them, organize them with tags, and copy them when needed.
+**CodeVault** is a lightweight React + TypeScript application that keeps reusable code snippets organized in your browser. Add snippets, find them quickly with search and filters, copy code when you need it, and keep portable JSON backups.
+
+**[Open the live demo](https://imanr236.github.io/CodeVault/)** · **[View the source code](https://github.com/CodeVault-Community/CodeVault)**
+
+## Why CodeVault?
+
+Developers often collect useful commands and code fragments across notes, files, and browser tabs. CodeVault brings those snippets into one searchable library without requiring an account or sending your data to a server.
 
 ## Features
 
@@ -20,12 +26,21 @@ CodeVault is a small React + TypeScript application. It helps you keep useful sn
 - Starter examples included on first launch
 - Responsive dark interface
 
+## Tech stack
+
+- React
+- TypeScript
+- Vite
+- Browser `localStorage`
+- Vitest and automated tests
+- GitHub Actions and GitHub Pages
+
 ## Run locally
 
 **Requirements:** Node.js 18 or newer and npm.
 
 ```bash
-git clone https://github.com/imanr236/CodeVault.git
+git clone https://github.com/CodeVault-Community/CodeVault.git
 cd CodeVault
 npm install
 npm run dev
@@ -105,3 +120,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 ## License
 
 No license has been added yet. Until a license is selected, do not assume the code is available for reuse.
+
+---
+
+**Topics:** `code-snippets` · `snippet-manager` · `react` · `typescript` · `vite` · `developer-tools` · `local-first` · `productivity`

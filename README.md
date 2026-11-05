@@ -98,6 +98,10 @@ CodeVault/
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for planned improvements.
 
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. You can use the issue templates to report bugs or suggest features, and the pull request template to describe your changes.
+
 ## License
 
 No license has been added yet. Until a license is selected, do not assume the code is available for reuse.
